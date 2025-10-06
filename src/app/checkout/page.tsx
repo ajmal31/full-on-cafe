@@ -5,16 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import type { Order } from "@/lib/types";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Download } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 function CheckoutPageContent() {
   const searchParams = useSearchParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const billRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -30,6 +33,30 @@ function CheckoutPageContent() {
       }
     }
   }, [searchParams]);
+
+  const handleDownloadPdf = () => {
+    if (!billRef.current || !order) return;
+
+    html2canvas(billRef.current).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'px', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const ratio = canvasWidth / pdfWidth;
+      const height = canvasHeight / ratio;
+
+      // if content is larger than one page
+      if (height > pdfHeight) {
+          // TODO: handle multi-page pdf
+          console.warn("content is larger than a single page, multi-page pdf not implemented")
+      }
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height);
+      pdf.save(`spicehub-bill-${order.id}.pdf`);
+    });
+  };
 
   if (!isMounted) {
     return (
@@ -54,8 +81,8 @@ function CheckoutPageContent() {
   return (
     <>
       <Header title="Order Confirmation" />
-      <main className="container mx-auto py-8 px-4 flex justify-center items-center min-h-[calc(100vh-80px)]">
-        <Card className="w-full max-w-2xl shadow-lg">
+      <main className="container mx-auto py-8 px-4 flex justify-center items-start min-h-[calc(100vh-80px)]">
+        <Card ref={billRef} className="w-full max-w-2xl shadow-lg">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <CheckCircle2 className="h-16 w-16 text-green-500" />
@@ -90,9 +117,13 @@ function CheckoutPageContent() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="justify-center">
+          <CardFooter className="flex-col sm:flex-row justify-center gap-4">
             <Button asChild>
               <Link href={`/${typeof order.tableNumber === 'number' ? `?table=${order.tableNumber}`: ''}`}>Start New Order</Link>
+            </Button>
+            <Button variant="outline" onClick={handleDownloadPdf}>
+                <Download className="mr-2 h-4 w-4"/>
+                Download Bill
             </Button>
           </CardFooter>
         </Card>
