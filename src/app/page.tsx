@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 import { menuData } from '@/lib/menu-data';
 import type { MenuItem } from '@/lib/types';
 import { useCart } from '@/context/CartContext';

@@ -98,7 +98,8 @@ function CheckoutPageContent() {
       <Header title="Order Confirmation" />
       <main className="container mx-auto py-8 px-4 flex justify-center items-start min-h-[calc(100vh-80px)] relative">
         {showConfetti && <ConfettiExplosion />}
-        <Card ref={billRef} className="w-full max-w-2xl shadow-lg bg-card/50 p-4 sm:p-6">
+        <Card className="w-full max-w-2xl shadow-lg bg-card/50">
+         <div ref={billRef} className="p-4 sm:p-6">
           <CardHeader className="text-center">
             <h2 className="text-2xl font-bold font-headline text-amber-400">Full on Cafe</h2>
             <div className="flex justify-center my-4">
@@ -134,7 +135,8 @@ function CheckoutPageContent() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex-col sm:flex-row justify-center gap-4">
+          </div>
+          <CardFooter className="flex-col sm:flex-row justify-center gap-4 pt-6">
             <Button asChild>
               <Link href={`/${typeof order.tableNumber === 'number' ? `?table=${order.tableNumber}`: ''}`}>Start New Order</Link>
             </Button>

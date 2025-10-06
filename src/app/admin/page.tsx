@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { formatDistanceToNow } from 'date-fns';
 import { Separator } from "@/components/ui/separator";
-import { Download, CheckCircle2 } from "lucide-react";
+import { Download } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -66,6 +66,8 @@ export default function AdminDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const billRef = useRef<HTMLDivElement>(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
 
   useEffect(() => {
     setIsMounted(true);
@@ -96,8 +98,8 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDownloadPdf = (order: Order) => {
-    if (!billRef.current || !order) return;
+  const handleDownloadPdf = () => {
+    if (!billRef.current || !selectedOrder) return;
 
     html2canvas(billRef.current, { backgroundColor: '#0a0a0a' }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
@@ -108,7 +110,7 @@ export default function AdminDashboard() {
       const height = canvas.height / ratio;
 
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, height);
-      pdf.save(`full-on-cafe-bill-${order.id}.pdf`);
+      pdf.save(`full-on-cafe-bill-${selectedOrder.id}.pdf`);
     });
   };
 
@@ -144,7 +146,7 @@ export default function AdminDashboard() {
                 <TableRow key={order.id} className="hover:bg-muted/50">
                   <TableCell className="font-bold text-lg">{order.tableNumber}</TableCell>
                   <TableCell>
-                    <Dialog>
+                    <Dialog onOpenChange={(open) => open && setSelectedOrder(order)}>
                       <DialogTrigger asChild>
                         <Button variant="link" className="p-0 h-auto text-base text-primary">{order.items.length} items</Button>
                       </DialogTrigger>
@@ -155,9 +157,9 @@ export default function AdminDashboard() {
                             Order ID: {order.id}
                           </DialogDescription>
                         </DialogHeader>
-                        <BillContent order={order} billRef={billRef} />
+                        {selectedOrder && <BillContent order={selectedOrder} billRef={billRef} />}
                         <DialogFooter className="mt-4">
-                            <Button variant="outline" onClick={() => handleDownloadPdf(order)}>
+                            <Button variant="outline" onClick={handleDownloadPdf}>
                                 <Download className="mr-2 h-4 w-4"/>
                                 Download Bill
                             </Button>
