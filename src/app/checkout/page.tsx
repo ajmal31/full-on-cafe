@@ -12,6 +12,7 @@ import { useEffect, useState, Suspense, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { ConfettiExplosion } from "@/components/ConfettiExplosion";
 
 function CheckoutPageContent() {
   const searchParams = useSearchParams();
@@ -19,6 +20,7 @@ function CheckoutPageContent() {
   const [isMounted, setIsMounted] = useState(false);
   const billRef = useRef<HTMLDivElement>(null);
   const checkmarkRef = useRef<SVGSVGElement>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -28,6 +30,9 @@ function CheckoutPageContent() {
         const allOrders: Order[] = JSON.parse(localStorage.getItem('orders') || '[]');
         const currentOrder = allOrders.find(o => o.id === orderId);
         setOrder(currentOrder || null);
+        if (currentOrder) {
+          setShowConfetti(true);
+        }
       } catch (error) {
         console.error("Failed to parse orders from localStorage", error);
         setOrder(null);
@@ -91,7 +96,8 @@ function CheckoutPageContent() {
   return (
     <>
       <Header title="Order Confirmation" />
-      <main className="container mx-auto py-8 px-4 flex justify-center items-start min-h-[calc(100vh-80px)]">
+      <main className="container mx-auto py-8 px-4 flex justify-center items-start min-h-[calc(100vh-80px)] relative">
+        {showConfetti && <ConfettiExplosion />}
         <Card ref={billRef} className="w-full max-w-2xl shadow-lg bg-card/50">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">

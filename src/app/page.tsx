@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense, useEffect, useRef } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { menuData } from '@/lib/menu-data';
 import type { MenuItem } from '@/lib/types';
 import { useCart } from '@/context/CartContext';
@@ -11,8 +11,7 @@ import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { FloatingCartButton } from '@/components/FloatingCartButton';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Camera, CameraOff } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Plus } from 'lucide-react';
 
 const categories = ['All', 'Starters', 'Main Course', 'Drinks', 'Desserts'];
 
@@ -50,35 +49,6 @@ function MenuPageContent() {
   const [activeCategory, setActiveCategory] = useState('All');
   const { addToCart } = useCart();
   const { toast } = useToast();
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const getCameraPermission = async () => {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        setHasCameraPermission(false);
-        return;
-      }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        setHasCameraPermission(true);
-
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      } catch (error) {
-        console.error('Error accessing camera:', error);
-        setHasCameraPermission(false);
-        toast({
-          variant: 'destructive',
-          title: 'Camera Access Denied',
-          description: 'Please enable camera permissions in your browser settings to use this app.',
-        });
-      }
-    };
-
-    getCameraPermission();
-  }, [toast]);
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart(item);
@@ -96,27 +66,6 @@ function MenuPageContent() {
     <>
       <Header title="Full on Cafe" showAdminLink={true} />
       <main className="container mx-auto py-8 px-4">
-        <div className="mb-8 relative rounded-lg overflow-hidden border">
-           <video ref={videoRef} className="w-full aspect-video rounded-md" autoPlay muted playsInline />
-           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              {hasCameraPermission === false && (
-                <Alert variant="destructive" className="max-w-sm bg-destructive/20 border-destructive">
-                  <CameraOff className="h-4 w-4" />
-                  <AlertTitle>Camera Access Required</AlertTitle>
-                  <AlertDescription>
-                    Please allow camera access to scan QR codes.
-                  </AlertDescription>
-              </Alert>
-              )}
-               {hasCameraPermission === true && (
-                <div className="text-center text-white p-4 rounded-lg bg-black/30 backdrop-blur-sm">
-                  <Camera className="h-12 w-12 mx-auto mb-2"/>
-                  <h2 className="text-lg font-bold">Scan QR code on your table</h2>
-                </div>
-               )}
-           </div>
-        </div>
-
         <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full mb-8">
           <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 bg-background/60">
             {categories.map(category => (
