@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "A delicious plate of Chicken Biryani.",
+      "imageUrl": "https://images.unsplash.com/photo-1691171047439-4b39b58b4766?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8YmlyeWFuaSUyMGNoaWNrZW58ZW58MHx8fHwxNzU5NzgxMTM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "biryani chicken"
+    },
+    {
+      "id": "2",
+      "description": "A bowl of creamy Paneer Butter Masala.",
+      "imageUrl": "https://images.unsplash.com/photo-1716535232842-d10da4eb33d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjdXJyeSUyMHBhbmVlcnxlbnwwfHx8fDE3NTk3ODExMzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "curry paneer"
+    },
+    {
+      "id": "3",
+      "description": "A basket of crispy French Fries.",
+      "imageUrl": "https://images.unsplash.com/photo-1598998834333-c0b91bc9b2a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmcmVuY2glMjBmcmllc3xlbnwwfHx8fDE3NTk3NTIwMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "french fries"
+    },
+    {
+      "id": "4",
+      "description": "A refreshing glass of Lime Soda.",
+      "imageUrl": "https://images.unsplash.com/photo-1610873167013-2dd675d30ef4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzb2RhJTIwZHJpbmt8ZW58MHx8fHwxNzU5NjkwNTIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "soda drink"
+    },
+    {
+      "id": "5",
+      "description": "Sweet Gulab Jamun dessert.",
+      "imageUrl": "https://images.unsplash.com/photo-1710354473651-550a697a2a07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzd2VldCUyMGRlc3NlcnR8ZW58MHx8fHwxNzU5NzI5NjQ4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sweet dessert"
+    }
+  ]
 }
