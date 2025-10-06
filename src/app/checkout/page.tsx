@@ -98,9 +98,10 @@ function CheckoutPageContent() {
       <Header title="Order Confirmation" />
       <main className="container mx-auto py-8 px-4 flex justify-center items-start min-h-[calc(100vh-80px)] relative">
         {showConfetti && <ConfettiExplosion />}
-        <Card ref={billRef} className="w-full max-w-2xl shadow-lg bg-card/50">
+        <Card ref={billRef} className="w-full max-w-2xl shadow-lg bg-card/50 p-4 sm:p-6">
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+            <h2 className="text-2xl font-bold font-headline text-amber-400">Full on Cafe</h2>
+            <div className="flex justify-center my-4">
               <CheckCircle2 ref={checkmarkRef} className="h-16 w-16 text-green-500" />
             </div>
             <CardTitle className="text-3xl font-headline text-primary">Order Confirmed!</CardTitle>
