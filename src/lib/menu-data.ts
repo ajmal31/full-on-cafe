@@ -3,6 +3,7 @@ import { PlaceHolderImages } from './placeholder-images';
 
 const getImage = (id: string) => {
     const image = PlaceHolderImages.find(img => img.id === id);
+    // Fallback to a default picsum image if not found, to avoid breaking the app.
     return image ? image.imageUrl : `https://picsum.photos/seed/${id}/600/400`;
 }
 
@@ -46,5 +47,45 @@ export const menuData: MenuItem[] = [
     price: 70,
     description: "Soft, spongy balls soaked in sweet syrup.",
     image: getImage("5")
+  },
+  {
+    id: 6,
+    name: "Vegetable Hakka Noodles",
+    category: "Main Course",
+    price: 140,
+    description: "Stir-fried noodles with a mix of fresh vegetables.",
+    image: getImage("6")
+  },
+  {
+    id: 7,
+    name: "Chilli Gobi",
+    category: "Starters",
+    price: 120,
+    description: "Crispy cauliflower florets tossed in a spicy sauce.",
+    image: getImage("7")
+  },
+  {
+    id: 8,
+    name: "Masala Chai",
+    category: "Drinks",
+    price: 30,
+    description: "Aromatic and spiced Indian tea.",
+    image: getImage("8")
+  },
+  {
+    id: 9,
+    name: "Chocolate Brownie",
+    category: "Desserts",
+    price: 110,
+    description: "Fudgy chocolate brownie served with a scoop of ice cream.",
+    image: getImage("9")
+  },
+  {
+    id: 10,
+    name: "Mutton Rogan Josh",
+    category: "Main Course",
+    price: 220,
+    description: "Aromatic lamb curry with a blend of intense spices.",
+    image: getImage("10")
   }
 ];

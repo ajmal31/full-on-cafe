@@ -8,3 +8,5 @@ export type ImagePlaceholder = {
 };
 
 export const PlaceHolderImages: ImagePlaceholder[] = data.placeholderImages;
+
+export const FullOnCafeLogo = 'https://picsum.photos/seed/logo/100/100';
