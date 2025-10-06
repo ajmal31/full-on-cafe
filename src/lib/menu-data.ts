@@ -87,5 +87,13 @@ export const initialMenuData: MenuItem[] = [
     price: 220,
     description: "Aromatic lamb curry with a blend of intense spices.",
     image: getImage("10")
-  }
+  },
+  {
+    id: 11,
+    name: 'Stir-fry Beef',
+    category: 'Main Course',
+    price: 250,
+    description: 'Tender beef strips with celery and a savory sauce.',
+    image: 'https://soupeduprecipes.com/wp-content/uploads/2022/04/how-to-make-stir-fry-beef-with-celery-recipe-500x500.png?crop=1',
+  },
 ];
