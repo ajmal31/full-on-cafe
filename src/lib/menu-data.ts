@@ -7,7 +7,7 @@ const getImage = (id: string) => {
     return image ? image.imageUrl : `https://picsum.photos/seed/${id}/600/400`;
 }
 
-export const menuData: MenuItem[] = [
+export const initialMenuData: MenuItem[] = [
   {
     id: 1,
     name: "Chicken Biryani",

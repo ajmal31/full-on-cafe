@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import type { Order } from "@/lib/types";
+import type { MenuItem, Order } from "@/lib/types";
 import { Header } from "@/components/Header";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { Download } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { AddItemForm } from "@/components/AddItemForm";
 
 function BillContent({ order, billRef }: { order: Order, billRef: React.RefObject<HTMLDivElement> }) {
   return (
@@ -114,6 +115,20 @@ export default function AdminDashboard() {
     });
   };
 
+  const onAddItem = (newItem: Omit<MenuItem, 'id'>) => {
+    try {
+      const menuItems: MenuItem[] = JSON.parse(localStorage.getItem('menuItems') || '[]');
+      const newId = menuItems.length > 0 ? Math.max(...menuItems.map(item => item.id)) + 1 : 1;
+      const fullNewItem = { ...newItem, id: newId };
+      const updatedMenu = [...menuItems, fullNewItem];
+      localStorage.setItem('menuItems', JSON.stringify(updatedMenu));
+      alert(`${newItem.name} added to menu!`);
+    } catch (error) {
+      console.error('Failed to add item to menu', error);
+      alert('Error: Could not add item.');
+    }
+  };
+
   if (!isMounted) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -127,70 +142,73 @@ export default function AdminDashboard() {
 
   return (
     <>
-      <Header title="Admin Dashboard — Live Orders" />
+      <Header title="Admin Dashboard" />
       <main className="container mx-auto py-8 px-4">
-        <div className="bg-card/50 rounded-lg shadow-lg overflow-hidden border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[80px]">Table/Type</TableHead>
-                <TableHead>Details</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-                <TableHead className="text-center w-[120px]">Status</TableHead>
-                <TableHead className="w-[150px]">Time</TableHead>
-                <TableHead className="text-right w-[160px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.length > 0 ? orders.map(order => (
-                <TableRow key={order.id} className="hover:bg-muted/50">
-                  <TableCell className="font-bold text-lg">{order.tableNumber}</TableCell>
-                  <TableCell>
-                    <Dialog onOpenChange={(open) => open && setSelectedOrder(order)}>
-                      <DialogTrigger asChild>
-                        <Button variant="link" className="p-0 h-auto text-base text-primary">{order.items.length} items</Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-lg">
-                        <DialogHeader>
-                          <DialogTitle>Order Details ({typeof order.tableNumber === 'number' ? `Table ${order.tableNumber}`: order.tableNumber})</DialogTitle>
-                           <DialogDescription>
-                            Order ID: {order.id}
-                          </DialogDescription>
-                        </DialogHeader>
-                        {selectedOrder && <BillContent order={selectedOrder} billRef={billRef} />}
-                        <DialogFooter className="mt-4">
-                            <Button variant="outline" onClick={handleDownloadPdf}>
-                                <Download className="mr-2 h-4 w-4"/>
-                                Download Bill
-                            </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
-                  <TableCell className="text-right font-semibold font-mono">₹{order.totalAmount}</TableCell>
-                  <TableCell className="text-center">
-                    <Badge variant={order.status === 'Served' ? 'default' : 'destructive'}>
-                      {order.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}</TableCell>
-                  <TableCell className="text-right">
-                    {order.status === 'Pending' && (
-                      <Button size="sm" onClick={() => handleMarkAsServed(order.id)}>
-                        Mark as Served
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              )) : (
-                <TableRow>
-                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
-                        No active orders.
-                    </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="md:col-span-2">
+                <h2 className="text-2xl font-headline text-primary mb-4">Live Orders</h2>
+                <div className="bg-card/50 rounded-lg shadow-lg overflow-hidden border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-[80px]">Table/Type</TableHead>
+                        <TableHead>Details</TableHead>
+                        <TableHead className="text-right">Total</TableHead>
+                        <TableHead className="text-center w-[120px]">Status</TableHead>
+                        <TableHead className="w-[150px]">Time</TableHead>
+                        <TableHead className="text-right w-[160px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {orders.length > 0 ? orders.map(order => (
+                        <TableRow key={order.id} className="hover:bg-muted/50">
+                          <TableCell className="font-bold text-lg">{order.tableNumber}</TableCell>
+                          <TableCell>
+                            <Dialog onOpenChange={(open) => { if(open) {setSelectedOrder(order)} else {setSelectedOrder(null)}}}>
+                              <DialogTrigger asChild>
+                                <Button variant="link" className="p-0 h-auto text-base text-primary">Preview Bill</Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-lg">
+                                {selectedOrder && <BillContent order={selectedOrder} billRef={billRef} />}
+                                <DialogFooter className="mt-4">
+                                    <Button variant="outline" onClick={handleDownloadPdf}>
+                                        <Download className="mr-2 h-4 w-4"/>
+                                        Download Bill
+                                    </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          </TableCell>
+                          <TableCell className="text-right font-semibold font-mono">₹{order.totalAmount}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={order.status === 'Served' ? 'default' : 'destructive'}>
+                              {order.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}</TableCell>
+                          <TableCell className="text-right">
+                            {order.status === 'Pending' && (
+                              <Button size="sm" onClick={() => handleMarkAsServed(order.id)}>
+                                Mark as Served
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )) : (
+                        <TableRow>
+                            <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                                No active orders.
+                            </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+            </div>
+            <div>
+                 <h2 className="text-2xl font-headline text-primary mb-4">Add Menu Item</h2>
+                 <AddItemForm onAddItem={onAddItem} />
+            </div>
         </div>
       </main>
     </>

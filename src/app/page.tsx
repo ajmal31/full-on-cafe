@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, Suspense } from 'react';
-import { menuData } from '@/lib/menu-data';
+import { useState, Suspense, useEffect } from 'react';
+import { initialMenuData } from '@/lib/menu-data';
 import type { MenuItem } from '@/lib/types';
 import { useCart } from '@/context/CartContext';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -49,6 +49,34 @@ function MenuPageContent() {
   const [activeCategory, setActiveCategory] = useState('All');
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const [menuData, setMenuData] = useState<MenuItem[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    try {
+      const storedMenu = localStorage.getItem('menuItems');
+      if (storedMenu) {
+        setMenuData(JSON.parse(storedMenu));
+      } else {
+        localStorage.setItem('menuItems', JSON.stringify(initialMenuData));
+        setMenuData(initialMenuData);
+      }
+    } catch (error) {
+      console.error("Failed to process menu data from localStorage", error);
+      setMenuData(initialMenuData);
+    }
+    
+    const handleStorageUpdate = () => {
+        const storedMenu = localStorage.getItem('menuItems');
+        if (storedMenu) {
+            setMenuData(JSON.parse(storedMenu));
+        }
+    };
+
+    window.addEventListener('storage', handleStorageUpdate);
+    return () => window.removeEventListener('storage', handleStorageUpdate);
+  }, []);
 
   const handleAddToCart = (item: MenuItem) => {
     addToCart(item);
@@ -61,6 +89,16 @@ function MenuPageContent() {
   const filteredMenu = activeCategory === 'All'
     ? menuData
     : menuData.filter(item => item.category === activeCategory);
+
+  if (!isMounted) {
+      return (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+              <p className="text-lg font-semibold">Loading Menu...</p>
+          </div>
+        </div>
+      );
+  }
 
   return (
     <>
