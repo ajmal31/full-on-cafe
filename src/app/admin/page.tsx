@@ -65,7 +65,7 @@ export default function AdminDashboard() {
     <>
       <Header title="Admin Dashboard — Live Orders" />
       <main className="container mx-auto py-8 px-4">
-        <div className="bg-card rounded-lg shadow-lg overflow-hidden border">
+        <div className="bg-card/50 rounded-lg shadow-lg overflow-hidden border">
           <Table>
             <TableHeader>
               <TableRow>
@@ -84,7 +84,7 @@ export default function AdminDashboard() {
                   <TableCell>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="link" className="p-0 h-auto text-base">{order.items.length} items</Button>
+                        <Button variant="link" className="p-0 h-auto text-base text-primary">{order.items.length} items</Button>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
                             <Separator className="my-3"/>
                             <div className="flex justify-between items-center font-bold text-lg">
                                 <p>Total</p>
-                                <p>₹{order.totalAmount}</p>
+                                <p className="text-primary">₹{order.totalAmount}</p>
                             </div>
                         </div>
                       </DialogContent>

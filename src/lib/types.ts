@@ -24,4 +24,5 @@ export interface Order {
   totalAmount: number;
   status: 'Pending' | 'Served';
   createdAt: string;
+  orderType: 'Dining' | 'Takeaway';
 }

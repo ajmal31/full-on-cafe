@@ -3,43 +3,53 @@
 import { useCart } from "@/context/CartContext";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, Armchair } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import type { Order } from "@/lib/types";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 function CartPageContent() {
   const { cartItems, updateQuantity, getCartTotal, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [tableNumber, setTableNumber] = useState<number | string | null>(null);
+  const { toast } = useToast();
+  const [tableNumber, setTableNumber] = useState<string>("");
+  const [initialTable, setInitialTable] = useState<string | null>(null);
 
   useEffect(() => {
     const table = searchParams.get('table');
     if (table) {
-      setTableNumber(isNaN(parseInt(table)) ? table : parseInt(table));
+      setTableNumber(table);
+      setInitialTable(table);
     }
   }, [searchParams]);
 
   const handlePlaceOrder = () => {
     if (cartItems.length === 0) {
-      alert("Your cart is empty.");
+      toast({ variant: "destructive", title: "Empty Cart", description: "Your cart is empty." });
       return;
     }
+    if (!tableNumber) {
+        toast({ variant: "destructive", title: "Table number required", description: "Please enter your table number to place a dining order." });
+        return;
+    }
 
-    const orderTableNumber = tableNumber || "Takeaway";
-    const orderId = `${orderTableNumber}-${Date.now()}`;
+    const orderId = `${tableNumber}-${Date.now()}`;
     const newOrder: Order = {
       id: orderId,
-      tableNumber: orderTableNumber,
+      tableNumber: isNaN(parseInt(tableNumber)) ? tableNumber : parseInt(tableNumber),
       items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
       totalAmount: getCartTotal(),
       status: "Pending",
       createdAt: new Date().toISOString(),
+      orderType: "Dining",
     };
 
     try {
@@ -47,21 +57,23 @@ function CartPageContent() {
       localStorage.setItem('orders', JSON.stringify([...existingOrders, newOrder]));
     } catch (error) {
       console.error("Could not save order to localStorage", error);
+      toast({ variant: "destructive", title: "Error", description: "Could not save your order." });
     }
     
     clearCart();
     router.push(`/checkout?orderId=${orderId}`);
   };
   
-  const displayTable = tableNumber ? `Table ${tableNumber}` : "Your Cart";
+  const displayTable = initialTable ? `Table ${initialTable}` : "Your Cart";
 
   return (
     <>
-      <Header title={tableNumber ? `Your Cart (Table ${tableNumber})` : "Your Cart"} />
+      <Header title={displayTable} />
       <main className="container mx-auto py-8 px-4">
-        <Card className="shadow-lg">
+        <Card className="shadow-lg bg-card/50">
           <CardHeader>
-            <CardTitle className="text-2xl font-headline">Review Your Order</CardTitle>
+            <CardTitle className="text-2xl font-headline text-primary">Review Your Order</CardTitle>
+            <CardDescription>Check your items and enter your table number.</CardDescription>
           </CardHeader>
           <CardContent>
             {cartItems.length === 0 ? (
@@ -93,7 +105,24 @@ function CartPageContent() {
                   </div>
                 ))}
                 <Separator className="my-4" />
-                <div className="flex justify-end items-center">
+
+                <div className="space-y-2">
+                    <Label htmlFor="tableNumber" className="flex items-center gap-2">
+                      <Armchair className="h-5 w-5 text-primary" />
+                      Table Number
+                    </Label>
+                    <Input 
+                        id="tableNumber"
+                        type="text"
+                        placeholder="Enter your table number"
+                        value={tableNumber}
+                        onChange={(e) => setTableNumber(e.target.value)}
+                        className="max-w-xs"
+                        disabled={!!initialTable}
+                    />
+                </div>
+
+                <div className="flex justify-end items-center pt-4">
                   <p className="text-lg font-bold">Total:</p>
                   <p className="text-xl font-bold text-primary ml-4">₹{getCartTotal()}</p>
                 </div>
@@ -102,7 +131,7 @@ function CartPageContent() {
           </CardContent>
           <CardFooter className="flex justify-between">
             <Button variant="outline" asChild>
-              <Link href={`/${tableNumber ? `?table=${tableNumber}` : ''}`}>Back to Menu</Link>
+              <Link href={`/${initialTable ? `?table=${initialTable}` : ''}`}>Back to Menu</Link>
             </Button>
             <Button
               onClick={handlePlaceOrder}
