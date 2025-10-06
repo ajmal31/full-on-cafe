@@ -1,4 +1,10 @@
 import type { MenuItem } from './types';
+import { PlaceHolderImages } from './placeholder-images';
+
+const getImage = (id: string) => {
+    const image = PlaceHolderImages.find(img => img.id === id);
+    return image ? image.imageUrl : `https://picsum.photos/seed/${id}/600/400`;
+}
 
 export const menuData: MenuItem[] = [
   {
@@ -7,7 +13,7 @@ export const menuData: MenuItem[] = [
     category: "Main Course",
     price: 180,
     description: "Aromatic rice dish with tender chicken and spices.",
-    image: "https://picsum.photos/seed/1/600/400"
+    image: getImage("1")
   },
   {
     id: 2,
@@ -15,7 +21,7 @@ export const menuData: MenuItem[] = [
     category: "Main Course",
     price: 160,
     description: "Creamy and rich curry with soft paneer cubes.",
-    image: "https://picsum.photos/seed/2/600/400"
+    image: getImage("2")
   },
   {
     id: 3,
@@ -23,7 +29,7 @@ export const menuData: MenuItem[] = [
     category: "Starters",
     price: 90,
     description: "Crispy golden-fried potato sticks.",
-    image: "https://picsum.photos/seed/3/600/400"
+    image: getImage("3")
   },
   {
     id: 4,
@@ -31,7 +37,7 @@ export const menuData: MenuItem[] = [
     category: "Drinks",
     price: 40,
     description: "Refreshing sparkling drink with a tangy lime twist.",
-    image: "https://picsum.photos/seed/4/600/400"
+    image: getImage("4")
   },
   {
     id: 5,
@@ -39,6 +45,6 @@ export const menuData: MenuItem[] = [
     category: "Desserts",
     price: 70,
     description: "Soft, spongy balls soaked in sweet syrup.",
-    image: "https://picsum.photos/seed/5/600/400"
+    image: getImage("5")
   }
 ];

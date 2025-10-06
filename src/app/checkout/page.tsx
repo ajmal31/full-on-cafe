@@ -66,7 +66,7 @@ function CheckoutPageContent() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <p className="text-muted-foreground">Table Number</p>
+                <p className="text-muted-foreground">{typeof order.tableNumber === 'number' ? 'Table Number' : 'Order Type'}</p>
                 <p className="font-bold text-lg">{order.tableNumber}</p>
               </div>
               <div className="flex justify-between items-center">
@@ -92,7 +92,7 @@ function CheckoutPageContent() {
           </CardContent>
           <CardFooter className="justify-center">
             <Button asChild>
-              <Link href={`/?table=${order.tableNumber}`}>Start New Order</Link>
+              <Link href={`/${typeof order.tableNumber === 'number' ? `?table=${order.tableNumber}`: ''}`}>Start New Order</Link>
             </Button>
           </CardFooter>
         </Card>

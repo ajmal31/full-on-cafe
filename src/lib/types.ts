@@ -19,7 +19,7 @@ export interface OrderItem {
 
 export interface Order {
   id: string;
-  tableNumber: number;
+  tableNumber: number | string;
   items: OrderItem[];
   totalAmount: number;
   status: 'Pending' | 'Served';

@@ -16,29 +16,26 @@ function CartPageContent() {
   const { cartItems, updateQuantity, getCartTotal, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [tableNumber, setTableNumber] = useState<number | null>(null);
+  const [tableNumber, setTableNumber] = useState<number | string | null>(null);
 
   useEffect(() => {
     const table = searchParams.get('table');
-    if (table && !isNaN(parseInt(table))) {
-      setTableNumber(parseInt(table));
+    if (table) {
+      setTableNumber(isNaN(parseInt(table)) ? table : parseInt(table));
     }
   }, [searchParams]);
 
   const handlePlaceOrder = () => {
-    if (tableNumber === null) {
-      alert("Table number is not specified. Please go back to the menu and use the QR code link (e.g., /?table=1).");
-      return;
-    }
     if (cartItems.length === 0) {
       alert("Your cart is empty.");
       return;
     }
 
-    const orderId = `${tableNumber}-${Date.now()}`;
+    const orderTableNumber = tableNumber || "Takeaway";
+    const orderId = `${orderTableNumber}-${Date.now()}`;
     const newOrder: Order = {
       id: orderId,
-      tableNumber,
+      tableNumber: orderTableNumber,
       items: cartItems.map(item => ({ name: item.name, quantity: item.quantity, price: item.price })),
       totalAmount: getCartTotal(),
       status: "Pending",
@@ -55,6 +52,8 @@ function CartPageContent() {
     clearCart();
     router.push(`/checkout?orderId=${orderId}`);
   };
+  
+  const displayTable = tableNumber ? `Table ${tableNumber}` : "Your Cart";
 
   return (
     <>
@@ -107,7 +106,7 @@ function CartPageContent() {
             </Button>
             <Button
               onClick={handlePlaceOrder}
-              disabled={cartItems.length === 0 || tableNumber === null}
+              disabled={cartItems.length === 0}
               className="transform transition-transform hover:scale-105"
             >
               Place Order

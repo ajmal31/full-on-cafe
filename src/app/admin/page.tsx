@@ -69,7 +69,7 @@ export default function AdminDashboard() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[80px]">Table</TableHead>
+                <TableHead className="w-[80px]">Table/Type</TableHead>
                 <TableHead>Details</TableHead>
                 <TableHead className="text-right">Total</TableHead>
                 <TableHead className="text-center w-[120px]">Status</TableHead>
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                          <DialogTitle>Order Details (Table {order.tableNumber})</DialogTitle>
+                          <DialogTitle>Order Details ({typeof order.tableNumber === 'number' ? `Table ${order.tableNumber}`: order.tableNumber})</DialogTitle>
                           <DialogDescription>
                             {formatDistanceToNow(new Date(order.createdAt), { addSuffix: true })}
                           </DialogDescription>
