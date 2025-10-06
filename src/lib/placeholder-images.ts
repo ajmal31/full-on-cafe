@@ -9,4 +9,4 @@ export type ImagePlaceholder = {
 
 export const PlaceHolderImages: ImagePlaceholder[] = data.placeholderImages;
 
-export const FullOnCafeLogo = 'https://picsum.photos/seed/logo/100/100';
+export const FullOnCafeLogo = 'https://i.ibb.co/9brc9Bw/full-on-cafe-logo.png';

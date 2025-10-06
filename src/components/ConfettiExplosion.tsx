@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 
-const ConfettiPiece = ({ id, style }: { id: number, style: React.CSSProperties }) => (
+const ConfettiPiece = ({ id, style, onAnimationEnd }: { id: number, style: React.CSSProperties, onAnimationEnd: () => void }) => (
   <div
     key={id}
     className="confetti-piece"
     style={style}
+    onAnimationEnd={onAnimationEnd}
   />
 );
 
@@ -37,9 +38,14 @@ export function ConfettiExplosion() {
     setPieces(newPieces);
   }, []);
 
+  const handleAnimationEnd = (id: number) => {
+    setPieces(prevPieces => prevPieces.filter(p => p.id !== id));
+  };
+
+
   return (
     <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-50 overflow-hidden">
-        {pieces.map(p => <ConfettiPiece key={p.id} id={p.id} style={p.style} />)}
+        {pieces.map(p => <ConfettiPiece key={p.id} id={p.id} style={p.style} onAnimationEnd={() => handleAnimationEnd(p.id)} />)}
     </div>
   );
 }
